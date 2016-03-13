@@ -19,17 +19,53 @@ def whoFirst():
         
 # Returns the index of the computer's move
 def AIMove(board):
+    if board[4] == ' ':
+        return 4
+    isNonCornerOpen, spot = nonCornerIsOpen(board)
+    if isNonCornerOpen == True:
+        return spot
     goodMove = False
     while goodMove == False:
         move = random.randrange(9)
         if board[move] == ' ':
             return move
 
+# If a non-corner, non-middle spot is open, it returns true and the index
+def nonCornerIsOpen(board):
+    if board[1] == ' ':
+        return True, 1
+    elif board[7] == ' ':
+        return True, 7
+    elif board[3] == ' ':
+        return True, 3
+    elif board[5] == ' ':
+        return True, 5
+    else:
+        return False, -1
+
+# Returns the index of the user move
 def getUserMove(board):
     while True:
-        userMoveIndex = int(input("Enter your move choice: "))
-        if board[userMoveIndex] == ' ':
-            return userMoveIndex 
+        userInput = input("Enter your move choice: ")
+        if userInput == "tl" and board[0] == ' ':
+            return 0
+        if userInput == "tm"and board[1] == ' ':
+            return 1
+        if userInput == "tr" and board[2] == ' ':
+            return 2
+        if userInput == "ml" and board[3] == ' ':
+            return 3
+        if userInput == "mm" and board[4] == ' ':
+            return 4
+        if userInput == "mr" and board[5] == ' ':
+            return 5
+        if userInput == "bl" and board[6] == ' ':
+            return 6
+        if userInput == "bm" and board[7] == ' ':
+            return 7
+        if userInput == "br" and board[8] == ' ':
+            return 8
+        print("Not a valid choice")
 
 def checkWinningCombination(combination):
     return True if combination[0] != ' ' and combination[0] == combination[1] == combination[2] else False 
@@ -42,9 +78,10 @@ def checkForWin(board):
 
     return False
 
-def checkForTie(board):
+# Returns true if there is a tie
+def isATie(board):
     for square in board:
-        if board == ' ':
+        if square == ' ':
             return False
 
     return True
@@ -69,6 +106,7 @@ def play():
     print(computerLetter + " goes first!\n")
 
     while True:
+        print("Computer's move")
         AIMoveIndex = AIMove(board)
         board[AIMoveIndex] = computerLetter
         printBoard(board)
@@ -77,7 +115,7 @@ def play():
         if someoneWon == True:
             printLoser()
             break
-        if checkForTie == True: #Since there are 9 spots, there can only be a tie after the first person goes
+        if isATie(board) == True: #Since there are 9 spots, there can only be a tie after the first person goes
             print("Tie!")
             break
 
