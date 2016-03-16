@@ -18,9 +18,9 @@ def printBoard(board):
 def whoFirst():
     return True if random.randrange(2) == 1 else False
 
-        
 # Returns the index of the computer's move
-def AIMove(board, computerLetter, playerLetter):
+def AIMoveFirst(board, computerLetter, playerLetter):
+
     if board[4] == ' ':
         return 4
 
@@ -36,22 +36,39 @@ def AIMove(board, computerLetter, playerLetter):
     if canLoseGame == True:
         return emptySpot
 
-    if board[4] == computerLetter and move == 3:
+    # Pick opposite corner from player's move
+    if move == 3:
         if board[0] == playerLetter or board[1] == playerLetter:
             return 8
-        if board[2] == playerLetter:
+        elif board[2] == playerLetter:
             return 6
-        if board[3] == playerLetter or board[6] == playerLetter or board[7] == playerLetter:
+        elif board[3] == playerLetter or board[6] == playerLetter or board[7] == playerLetter:
             return 2
-        if board[8] == playerLetter or board[5] == playerLetter:
+        elif board[8] == playerLetter or board[5] == playerLetter:
             return 0
 
-
-
-
-    isNonCornerOpen, spot = nonCornerIsOpen(board)
-    if isNonCornerOpen == True:
-        return spot
+    # We know that the player has a corner piece and a mystery piece on a non-corner edge
+    if move == 5:
+        if board[1] == playerLetter:
+            if board[6] == playerLetter:
+                return 8
+            else:
+                return 6
+        if board[3] == playerLetter:
+            if board[8] == playerLetter:
+                return 2
+            else:
+                return 8
+        if board[5] == playerLetter:
+            if board[0] == playerLetter:
+                return 6
+            else:
+                return 0
+        else:
+            if board[2] == playerLetter:
+                return 0
+            else:
+                return 2
 
     # Loop until get an empty spot
     while True:
@@ -59,17 +76,18 @@ def AIMove(board, computerLetter, playerLetter):
         if board[move] == ' ':
             return move
 
-# Checks to see if there are two spots filled with AI letter with the third spot empty. If so, it returns the empty spot
+# Checks to see if there are two spots filled with given letter, while the third spot is empty. If so, it returns the empty spot
 def determineGameCanEnd(board, letter):
     indices = [(0, 1, 2), (3, 4, 5), (6, 7, 8), (0, 3, 6), (1, 4, 7), (2, 5, 8), (6, 4, 2), (0, 4, 8)]
     for indexSet in indices:
-        canWinCombo, emptySpot = canWinWithCombo(indexSet, board, letter)
+        canWinCombo, emptySpot = canEndWithCombo(indexSet, board, letter)
         if canWinCombo == True:
             return True, indexSet[emptySpot] 
 
     return False, -1
 
-def canWinWithCombo(indices, board, letter):
+# Checks if the game can end given a certain set of board squares. 
+def canEndWithCombo(indices, board, letter):
     combo = board[indices[0]], board[indices[1]], board[indices[2]]
     if combo[0] == letter and combo[1] == letter and combo[2] == ' ':
         return True, 2
@@ -98,23 +116,23 @@ def nonCornerIsOpen(board):
 def getUserMove(board):
     while True:
         userInput = input("Enter your move choice: ")
-        if userInput == "tl" and board[0] == ' ':
+        if (userInput == "tl" or userInput == "0") and board[0] == ' ':
             return 0
-        if userInput == "tm"and board[1] == ' ':
+        if (userInput == "tm"  or userInput == "1") and board[1] == ' ':
             return 1
-        if userInput == "tr" and board[2] == ' ':
+        if (userInput == "tr"  or userInput == "2") and board[2] == ' ':
             return 2
-        if userInput == "ml" and board[3] == ' ':
+        if (userInput == "ml"  or userInput == "3") and board[3] == ' ':
             return 3
-        if userInput == "mm" and board[4] == ' ':
+        if (userInput == "mm"  or userInput == "4") and board[4] == ' ':
             return 4
-        if userInput == "mr" and board[5] == ' ':
+        if (userInput == "mr"  or userInput == "5") and board[5] == ' ':
             return 5
-        if userInput == "bl" and board[6] == ' ':
+        if (userInput == "bl"  or userInput == "6") and board[6] == ' ':
             return 6
-        if userInput == "bm" and board[7] == ' ':
+        if (userInput == "bm"  or userInput == "7") and board[7] == ' ':
             return 7
-        if userInput == "br" and board[8] == ' ':
+        if (userInput == "br"  or userInput == "8") and board[8] == ' ':
             return 8
         print("Not a valid choice")
 
@@ -161,7 +179,7 @@ def play():
 
     while True:
         print("Computer's move")
-        AIMoveIndex = AIMove(board, computerLetter, userLetter)
+        AIMoveIndex = AIMoveFirst(board, computerLetter, userLetter)
         board[AIMoveIndex] = computerLetter
         printBoard(board)
 
