@@ -15,7 +15,7 @@ def printBoard(board):
     print("")
 
 # Returns true if user goes first, false if computer is
-def whoFirst():
+def isPlayerFirst():
     return True if random.randrange(2) == 1 else False
 
 # Returns the index of the computer's move
@@ -137,15 +137,16 @@ def getUserMove(board):
         print("Not a valid choice")
 
 def checkWinningCombination(combination):
-    return True if combination[0] != ' ' and combination[0] == combination[1] == combination[2] else False 
+    return (True, combination[0]) if combination[0] != ' ' and combination[0] == combination[1] == combination[2] else (False, ' ')
          
 def checkForWin(board):
     combinations = [(board[0], board[1], board[2]), (board[3], board[4], board[5]), (board[6], board[7], board[8]), (board[0], board[3], board[6]), (board[1], board[4], board[7]), (board[2], board[5], board[8]), (board[6], board[4], board[2]), (board[0], board[4], board[8])]
     for combo in combinations:
-        if checkWinningCombination(combo) == True:
-            return True
+        didComboWin, winningLetter = checkWinningCombination(combo)
+        if didComboWin == True:
+            return True, winningLetter
 
-    return False
+    return False, ' '
 
 # Returns true if there is a tie
 def isATie(board):
@@ -164,43 +165,66 @@ def whichMove(board):
 
     return count
 
+def AITurn(board, computerLetter, playerLetter):
+    print("Computer's move")
+    AIMoveIndex = AIMoveFirst(board, computerLetter, playerLetter)
+    board[AIMoveIndex] = computerLetter
+
+def playerTurn(board, playerLetter):
+    userMoveIndex = getUserMove(board)
+    board[userMoveIndex] = playerLetter
+
 
 #The main loop of the game
 def play():
     board = [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
     printBoard(board)
     computerLetter = 'X'
-    userLetter = 'O'
-    winningLetter = ' '
+    playerLetter = 'O'
 
-    someoneWon = False
+    playerIsFirst = isPlayerFirst()
 
-    print(computerLetter + " goes first!\n")
+    if playerIsFirst == True:
+        print("You go first!")
+        print("You are " + playerLetter + "!\n")
+    else:
+        print("Computer goes first!")
+        print("The computer is " + computerLetter + "!\n")
 
     while True:
-        print("Computer's move")
-        AIMoveIndex = AIMoveFirst(board, computerLetter, userLetter)
-        board[AIMoveIndex] = computerLetter
+        if playerIsFirst == True:
+            playerTurn(board, playerLetter)
+        else:
+            AITurn(board, computerLetter, playerLetter)
+        
         printBoard(board)
 
-        someoneWon = checkForWin(board)
+        someoneWon, winningLetter = checkForWin(board)
         if someoneWon == True:
-            print("You lose.")
+            if winningLetter == playerLetter:
+                print("Congratulations! You won!") 
+            else:
+                print("You lose.")
             break
+
         if isATie(board) == True: #Since there are 9 spots, there can only be a tie after the first person goes
             print("Tie!")
             break
 
-        userMoveIndex = getUserMove(board)
-        board[userMoveIndex] = userLetter
+        if playerIsFirst == True:
+            AITurn(board, computerLetter, playerLetter)
+        else:
+            playerTurn(board, playerLetter)
         
         printBoard(board)
     
-        someoneWon = checkForWin(board)
+        someoneWon, winningLetter = checkForWin(board)
         if someoneWon == True:
-            print("Congratulations! You won!") 
+            if winningLetter == playerLetter:
+                print("Congratulations! You won!") 
+            else:
+                print("You lose.")
             break
-
 
 print("Welcome to Tic-Tac-Toe!\n")
 play()
