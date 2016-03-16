@@ -1,3 +1,5 @@
+# Justin Carruthers
+# PyTacToe - A tic tac toe game written in Python
 import random
 
 def printBoard(board):
@@ -21,26 +23,44 @@ def whoFirst():
 def AIMove(board, computerLetter, playerLetter):
     if board[4] == ' ':
         return 4
-    #Check if we have 2 spots in a row
-    canWinGame, emptySpot = determineCanWinGame(board, computerLetter)
+
+    move = whichMove(board)
+
+    # Check if we have 2 spots in a row
+    canWinGame, emptySpot = determineGameCanEnd(board, computerLetter)
     if canWinGame == True:
         return emptySpot
-    #Check if they have 2 spots in a row
-    canLoseGame, emptySpot = determineCanWinGame(board, playerLetter)
+
+    # Check if they have 2 spots in a row
+    canLoseGame, emptySpot = determineGameCanEnd(board, playerLetter)
     if canLoseGame == True:
         return emptySpot
+
+    if board[4] == computerLetter and move == 3:
+        if board[0] == playerLetter or board[1] == playerLetter:
+            return 8
+        if board[2] == playerLetter:
+            return 6
+        if board[3] == playerLetter or board[6] == playerLetter or board[7] == playerLetter:
+            return 2
+        if board[8] == playerLetter or board[5] == playerLetter:
+            return 0
+
+
+
+
     isNonCornerOpen, spot = nonCornerIsOpen(board)
     if isNonCornerOpen == True:
         return spot
 
-    #Loop until get an empty spot
+    # Loop until get an empty spot
     while True:
         move = random.randrange(9)
         if board[move] == ' ':
             return move
 
-#Checks to see if there are two spots filled with AI letter with the third spot empty. If so, it returns the empty spot
-def determineCanWinGame(board, letter):
+# Checks to see if there are two spots filled with AI letter with the third spot empty. If so, it returns the empty spot
+def determineGameCanEnd(board, letter):
     indices = [(0, 1, 2), (3, 4, 5), (6, 7, 8), (0, 3, 6), (1, 4, 7), (2, 5, 8), (6, 4, 2), (0, 4, 8)]
     for indexSet in indices:
         canWinCombo, emptySpot = canWinWithCombo(indexSet, board, letter)
@@ -117,11 +137,14 @@ def isATie(board):
 
     return True
 
-def printWinner():
-    print("Congratulations! You won!") 
+# Returns which move we are on. First time anyone moves is the first move
+def whichMove(board):
+    count = 1
+    for square in board:
+        if square != ' ':
+            count = count + 1
 
-def printLoser():
-    print("You lose.")
+    return count
 
 
 #The main loop of the game
@@ -144,7 +167,7 @@ def play():
 
         someoneWon = checkForWin(board)
         if someoneWon == True:
-            printLoser()
+            print("You lose.")
             break
         if isATie(board) == True: #Since there are 9 spots, there can only be a tie after the first person goes
             print("Tie!")
@@ -157,7 +180,7 @@ def play():
     
         someoneWon = checkForWin(board)
         if someoneWon == True:
-            printWinner()
+            print("Congratulations! You won!") 
             break
 
 
