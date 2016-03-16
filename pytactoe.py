@@ -1,6 +1,7 @@
 # Justin Carruthers
 # PyTacToe - A tic tac toe game written in Python
 import random
+import os
 
 def printBoard(board):
     print("   |   |   ")
@@ -21,10 +22,13 @@ def isPlayerFirst():
 # Returns the index of the computer's move
 def AIMoveFirst(board, computerLetter, playerLetter):
 
+    move = whichMove(board)
+
     if board[4] == ' ':
         return 4
 
-    move = whichMove(board)
+    elif board[4] != ' ' and move == 2:
+        return 0
 
     # Check if we have 2 spots in a row
     canWinGame, emptySpot = determineGameCanEnd(board, computerLetter)
@@ -82,11 +86,11 @@ def determineGameCanEnd(board, letter):
     for indexSet in indices:
         canWinCombo, emptySpot = canEndWithCombo(indexSet, board, letter)
         if canWinCombo == True:
-            return True, indexSet[emptySpot] 
+            return True, indexSet[emptySpot]
 
     return False, -1
 
-# Checks if the game can end given a certain set of board squares. 
+# Checks if the game can end given a certain set of board squares.
 def canEndWithCombo(indices, board, letter):
     combo = board[indices[0]], board[indices[1]], board[indices[2]]
     if combo[0] == letter and combo[1] == letter and combo[2] == ' ':
@@ -138,7 +142,7 @@ def getUserMove(board):
 
 def checkWinningCombination(combination):
     return (True, combination[0]) if combination[0] != ' ' and combination[0] == combination[1] == combination[2] else (False, ' ')
-         
+
 def checkForWin(board):
     combinations = [(board[0], board[1], board[2]), (board[3], board[4], board[5]), (board[6], board[7], board[8]), (board[0], board[3], board[6]), (board[1], board[4], board[7]), (board[2], board[5], board[8]), (board[6], board[4], board[2]), (board[0], board[4], board[8])]
     for combo in combinations:
@@ -178,12 +182,13 @@ def playerTurn(board, playerLetter):
 #The main loop of the game
 def play():
     board = [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
-    printBoard(board)
     computerLetter = 'X'
     playerLetter = 'O'
 
     playerIsFirst = isPlayerFirst()
+    os.system('clear')
 
+    printBoard(board)
     if playerIsFirst == True:
         print("You go first!")
         print("You are " + playerLetter + "!\n")
@@ -195,14 +200,15 @@ def play():
         if playerIsFirst == True:
             playerTurn(board, playerLetter)
         else:
+            os.system('clear')
             AITurn(board, computerLetter, playerLetter)
-        
+
         printBoard(board)
 
         someoneWon, winningLetter = checkForWin(board)
         if someoneWon == True:
             if winningLetter == playerLetter:
-                print("Congratulations! You won!") 
+                print("Congratulations! You won!")
             else:
                 print("You lose.")
             break
@@ -215,13 +221,13 @@ def play():
             AITurn(board, computerLetter, playerLetter)
         else:
             playerTurn(board, playerLetter)
-        
+
         printBoard(board)
-    
+
         someoneWon, winningLetter = checkForWin(board)
         if someoneWon == True:
             if winningLetter == playerLetter:
-                print("Congratulations! You won!") 
+                print("Congratulations! You won!")
             else:
                 print("You lose.")
             break
