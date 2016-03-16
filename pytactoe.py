@@ -170,13 +170,14 @@ def whichMove(board):
     return count
 
 def AITurn(board, computerLetter, playerLetter):
-    print("Computer's move")
+    print("Computer's move\n")
     AIMoveIndex = AIMoveFirst(board, computerLetter, playerLetter)
     board[AIMoveIndex] = computerLetter
 
 def playerTurn(board, playerLetter):
     userMoveIndex = getUserMove(board)
     board[userMoveIndex] = playerLetter
+    print("")
 
 
 #The main loop of the game
@@ -188,19 +189,17 @@ def play():
     playerIsFirst = isPlayerFirst()
     os.system('clear')
 
+    print("Welcome to Tic-Tac-Toe!\n")
     printBoard(board)
     if playerIsFirst == True:
-        print("You go first!")
-        print("You are " + playerLetter + "!\n")
+        print("You go first! You are " + playerLetter + "!\n")
     else:
-        print("Computer goes first!")
-        print("The computer is " + computerLetter + "!\n")
+        print("Computer goes first! The computer is " + computerLetter + "!\n")
 
     while True:
         if playerIsFirst == True:
             playerTurn(board, playerLetter)
         else:
-            os.system('clear')
             AITurn(board, computerLetter, playerLetter)
 
         printBoard(board)
@@ -232,6 +231,5 @@ def play():
                 print("You lose.")
             break
 
-print("Welcome to Tic-Tac-Toe!\n")
 play()
 
